@@ -3,9 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bip39": "^2.0.2",
+    "crypto-js": "^3.1.9-1",
+    "ethers": "^4.0.28",
+    "ipfs-http-client": "^32.0.1",
+    "js-ipfs": "0.0.301",
+    "local-storage": "^2.0.0",
     "react": "^16.8.6",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1"
+    "react-player": "^1.11.0",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "3.0.1",
+    "web3": "^1.0.0-beta.55"
   },
   "scripts": {
     "start": "react-scripts start",
