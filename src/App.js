@@ -4,6 +4,7 @@ import Login from './Login'
 import Import from './Import'
 import Register from './Register'
 import Watch from './Watch'
+import Upload from './Upload'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" component={Login} exact ></Route>
           <Route path="/import" component={Import}></Route>
           <Route path="/register" component={Register}></Route>
+          <Route path="/upload" component={Upload}></Route>
           <Route path="/watch" component={Watch}></Route>
           </Switch>
       </div>

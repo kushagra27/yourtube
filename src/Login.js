@@ -9,12 +9,14 @@ export default class Login extends React.Component {
       this.state = {
         password: '',
         auth:false,
-        watch:false
+        watch:false,
+        upload:false
       };
   
       this.handleChange = this.handleChange.bind(this);
       this.handleLogin = this.handleLogin.bind(this);
       this.handleWatch = this.handleWatch.bind(this);
+      this.handleUpload = this.handleUpload.bind(this);
     }
   
     componentDidMount(){
@@ -47,6 +49,7 @@ export default class Login extends React.Component {
 
     handleUpload(event){
       event.preventDefault()
+      this.setState({upload:true})
     }
 
     handleWatch(event){
@@ -76,6 +79,10 @@ export default class Login extends React.Component {
       } else if(this.state.watch) {
         return(
           <Redirect to='/watch' />
+        )
+      } else if(this.state.upload) {
+        return(
+          <Redirect to='/upload' />
         )
       } else {
         return(
