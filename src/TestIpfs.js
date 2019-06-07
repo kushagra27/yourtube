@@ -1,5 +1,6 @@
 import React from 'react'
-import * as IPFS from 'ipfs'
+const IPFS = require('ipfs')
+// import ipfs from './ipfs'
 const OrbitDB = require('orbit-db');
 
 export class OrbitDBHandler extends React.Component {
@@ -13,19 +14,43 @@ export class OrbitDBHandler extends React.Component {
     }
     //connect to IPFS
     
-    componentDidMount(){
+    async componentDidMount(){
     
       const ipfs = new IPFS({
         EXPERIMENTAL: {
           pubsub: true
+        }, config: {
+          Addresses: {
+            Swarm: [
+              // '/dns4/wrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star'
+              '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
+            ]
+          }
         }
       })
     
       ipfs.on('ready', async () => {
-      console.log('ipfs ready' , ipfs);
-
+        
+        // console.log('IPFS Online Status: ', ipfs.isOnline())
+        // ipfs.swarm.connect(ipfsPeer, (err, result) => {
+          //   console.log('connecting to peers: ', result)
+          //   ipfs.swarm.peers((err, peerCount) => {
+            //     console.log('There are this many peers: ', peerCount)
+            //   })
+            // })
+            
+            // console.log('ipfs ready' , ipfs);
+      ipfs.swarm.peers()
+      await ipfs.swarm.peers().then((peers)=>console.log(peers))
+      const options = {
+        // Give write access to everyone
+        accessController: {
+          write: ['*']
+        }
+      }
+    
       //Create OrbitDB instance
-      const orbitdb = await OrbitDB.createInstance(ipfs);
+      const orbitdb = await OrbitDB.createInstance(ipfs , options);
 
       console.log("orbitdb ready");
 
@@ -43,9 +68,9 @@ export class OrbitDBHandler extends React.Component {
       })
 
       const data = {
-        has:'random',
-        data: 'asusc  uhe k',
-        category:['test','poiuu','uvac']
+        has:'confirm',
+        data: 'confirm',
+        category:['confirm','done','test']
       }
       // const hash = await db.add(data)
       // console.log(hash)
@@ -55,7 +80,7 @@ export class OrbitDBHandler extends React.Component {
       console.log(result.map((element)=>{
         return element.payload.value
       }))
-
+      
       // db.drop()
     })   
   }
