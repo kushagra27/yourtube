@@ -5,6 +5,7 @@ import Import from './Import'
 import Register from './Register'
 import Watch from './Watch'
 import Upload from './Upload'
+import OrbitDBHandler from './TestIpfs'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/register" component={Register}></Route>
           <Route path="/upload" component={Upload}></Route>
           <Route path="/watch" component={Watch}></Route>
+          <Route path="/test" component={OrbitDBHandler}></Route>
           </Switch>
       </div>
     </BrowserRouter>
