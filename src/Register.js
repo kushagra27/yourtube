@@ -2,9 +2,9 @@ import React from 'react'
 import bip39 from 'bip39'
 import { ethers } from 'ethers'
 import CryptoJS from 'crypto-js'
-import './assets/css/now-ui-kit.css'
 import { Redirect } from "react-router-dom";
-
+import ipfs from './ipfs'
+const OrbitDB = require('orbit-db')
 
 export default class Register extends React.Component{
     constructor(){
@@ -16,17 +16,19 @@ export default class Register extends React.Component{
             mnemonic:'',
             set:false
         }
-        this.handleChange = this.handleChange.bind(this)
-        this.handleRegister = this.handleRegister.bind(this)
     }
 
-    componentDidMount(){
+    async componentDidMount(){
+        const options = {
+            accessController: {
+              write: ['*']
+            }
+          }
         const mnem = bip39.generateMnemonic()
         this.setState({mnemonic:mnem})
-        
     }
 
-    handleChange(event){
+    handleChange = (event)=>{
         const {id,value} = event.target 
         this.setState({[id]:value},()=>{
             if(id ==='password'){
@@ -50,16 +52,29 @@ export default class Register extends React.Component{
         const wallet = new ethers.Wallet.fromMnemonic(this.state.mnemonic)
         console.log(wallet)
         const account = {
-            address : [wallet.address],
+            address : wallet.address,
+            YTbalance:0,
+            pendingBalance:0,
             privateKey : wallet.privateKey,
             publicKey : wallet.signingKey.keyPair.publicKey,
-            mnemonic : this.state.mnemonic
+            mnemonic : this.state.mnemonic,
+            uploads:'',
+            userInfo:'',
+            channelInfo:'',
         }
         let mnemonicCipher = CryptoJS.AES.encrypt(JSON.stringify(this.state.mnemonic),this.state.password).toString()
         let accountCipher = CryptoJS.AES.encrypt(JSON.stringify(account),this.state.mnemonic).toString()
         localStorage.setItem('1', accountCipher)
         localStorage.setItem('2', mnemonicCipher)
-        console.log('Account Created')
+        console.log(account.address)
+
+        const db = await this.props.value.orbitdb.docs(account.address,{indexBy:'address'})
+        await db.load()
+        console.log('db :',db)
+
+        const orbitHash = await db.put(account)
+        console.log(orbitHash)
+        alert("Account Created")
         this.setState({set:true})
     }
 
@@ -72,11 +87,11 @@ export default class Register extends React.Component{
                     <div>
                         <p>Regisrer</p>
                         <form>
-                            <div className={this.state.length?"form-group has-success":"form-group"}>
-                                <input className="form-control form-control-success" type="password" id="password" placehoolder="Enter password" value={this.state.password} onChange={this.handleChange} />
+                            <div>
+                                <input type="password" id="password" placehoolder="Enter password" value={this.state.password} onChange={this.handleChange} />
                             </div>
-                            <div className={this.state.match?"form-group has-success":"form-group"}>
-                                <input className="form-control form-control-success" type="password" id="repassword" placehoolder="Re-Enter password" value={this.state.repassword} onChange={this.handleChange} />
+                            <div>
+                                <input type="password" id="repassword" placehoolder="Re-Enter password" value={this.state.repassword} onChange={this.handleChange} />
                             </div>
                             <button
                                 onClick={this.handleRegister}

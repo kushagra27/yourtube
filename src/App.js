@@ -6,29 +6,38 @@ import Register from './Register'
 import Watch from './Watch'
 import Upload from './Upload'
 import OrbitDBHandler from './TestIpfs'
+import Search from './Search'
+import OrderBook from './OrderBook'
+import {ProductConsumer} from './context'
 
-function App() {
-  return (
-    // <BrowserRouter>
-    //   <div>
-    //     <Route exact path="/" component={Login} />
-    //     <Route path="/register" component={Register} />
-    //     <Route path="/import" component={Import} />
-    //   </div>
-    // </BrowserRouter>
-    <BrowserRouter>
-      <div>
-       <Switch>
-          <Route path="/" component={Login} exact ></Route>
-          <Route path="/import" component={Import}></Route>
-          <Route path="/register" component={Register}></Route>
-          <Route path="/upload" component={Upload}></Route>
-          <Route path="/watch" component={Watch}></Route>
-          <Route path="/test" component={OrbitDBHandler}></Route>
-          </Switch>
-      </div>
-    </BrowserRouter>
-  );
+
+class App extends React.Component {
+  render(){
+    return (
+      <ProductConsumer>
+        {
+          value =>{
+            return (
+              <BrowserRouter>
+                <div>
+                  <Switch>
+                    <Route path="/" exact render={()=><Login value={value}/>} ></Route>
+                    <Route path="/import" render={()=><Import value={value}/>}></Route>
+                    <Route path="/register" render={()=><Register value={value}/>}></Route>
+                    <Route path="/upload" render={()=><Upload value={value}/>}></Route>
+                    <Route path="/watch" render={()=><Watch value={value}/>}></Route>
+                    <Route path="/test" render={()=><OrbitDBHandler value={value}/>}></Route>
+                    <Route path="/search" render={()=><Search value={value}/>}></Route>
+                    <Route path="/orderbook" render={()=><OrderBook value={value}/>}></Route>
+                  </Switch>
+                </div>
+              </BrowserRouter>
+            )
+          }
+        }
+      </ProductConsumer>
+    )
+  }
 }
 
 export default App;

@@ -1,6 +1,5 @@
 import React from 'react'
 import web3 from './web3'
-import ipfs from './ipfs'
 
 export default class Watch extends React.Component{
     constructor(){
@@ -8,13 +7,23 @@ export default class Watch extends React.Component{
         this.state = {
             ipfsHash:null,
             buffer:'',
-            ethAddress:'',
-            blockNumber:'',
-            transactionHash:'',
-            gasUsed:'',
-            txReceipt: ''   
+            title:'',
+            category:'',
+            description:'',
+               
           };
+          this.handleChange = this.handleChange.bind(this)
     }
+
+    handleChange(event){
+      const {id,value} = event.target
+      this.setState({[id]:value})
+    }
+
+    async componentDidMount(){
+
+    }
+
     convertToBuffer = async(reader) => {
         //file is converted to a buffer for upload to IPFS
           const buffer = await Buffer.from(reader.result);
@@ -23,49 +32,45 @@ export default class Watch extends React.Component{
           console.log(buffer)
       };
 
-    captureFile =(event) => {
+    captureFile =async (event) => {
         event.stopPropagation()
         event.preventDefault()
         const file = event.target.files[0]
         let reader = new window.FileReader()
         reader.readAsArrayBuffer(file)
         reader.onloadend = () => this.convertToBuffer(reader)    
+        console.log('ipfs',this.props.value.ipfs)
+        console.log('orbitdb',this.props.value.orbitdb)
+        const db = await this.props.value.orbitdb.docs('library',{indexBy:'hash'})
+        console.log('db :',db)
+        await db.load()
+        
+        // db.events.on('replicated', (address) => {
+        //   console.log(db.iterator({ limit: -1 }).collect())
+        // })
+
+        this.setState({db:db})
       };
 
-      onSubmit = async (event) => {
-        event.preventDefault();
-  
-       //bring in user's metamask account address
-        const accounts = await web3.eth.getAccounts();
-       
-        console.log('Sending from Metamask account: ' + accounts[0]);
-  
-      //obtain contract address from storehash.js
-        // const ethAddress= await storehash.options.address;
-        // this.setState({ethAddress});
-  
-      //save document to IPFS,return its hash#, and set hash# to state
-      //https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/FILES.md#add 
-  
-        await ipfs.add(this.state.buffer, (err, ipfsHash) => {
-          console.log(err,ipfsHash);
-          //setState by setting ipfsHash to ipfsHash[0].hash 
-          this.setState({ ipfsHash:ipfsHash[0].hash });
-          console.log(ipfsHash)
-  
-     // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract 
-    //return the transaction hash from the ethereum contract
-   //see, this https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#methods-mymethod-send
-
-       //   storehash.methods.sendHash(this.state.ipfsHash).send({
-        //     from: accounts[0] 
-        //   }, (error, transactionHash) => {
-        //     console.log(transactionHash);
-        //     this.setState({transactionHash});
-        //   }); //storehash 
-        }) //await ipfs.add 
-      }; //onSubmit
+    onSubmit = async (event) => {
+      event.preventDefault();
+      await this.props.value.ipfs.add(this.state.buffer, async(err, ipfsHash) => {
+        console.log(err,ipfsHash);
+        //setState by setting ipfsHash to ipfsHash[0].hash 
+        await this.setState({ ipfsHash:ipfsHash[0].hash });
+        console.log(ipfsHash)
+        const data = await {
+          hash: this.state.ipfsHash,
+          title:this.state.title,
+          category:this.state.category,
+          description:this.state.description
+        }
+        const orbitHash = await this.state.db.put(data)
+        console.log('oribtHash : ',orbitHash) 
+      }) 
+    }
     
+
     render(){
         return( 
             <div>
@@ -74,6 +79,12 @@ export default class Watch extends React.Component{
                         type = "file"
                         onChange = {this.captureFile}
                     />
+                    <input type="text" id='title' placeholder="Title" value={this.state.title} onChange={this.handleChange} />
+                    <input type="text" id='description' placeholder="Description" value={this.state.description} onChange={this.handleChange} />
+                    <input type="text" id='category' placeholder="Category" value={this.state.category} onChange={this.handleChange} />
+                    <p>{this.state.category}</p>
+                    <p>{this.state.description}</p>
+                    <p>{this.state.title}</p>
                     <button 
                         bsStyle="primary" 
                         type="submit"> 

@@ -47,7 +47,7 @@ export default class Import extends React.Component{
         })
         }
 
-    handlePress = (event)=> {
+    handlePress = async (event)=> {
         event.preventDefault();
         const mnemonic = this.state.mnemonic
         try{
@@ -61,17 +61,37 @@ export default class Import extends React.Component{
             console.log(err)
             const wallet = ethers.Wallet.fromMnemonic(this.state.mnemonic)
             const account = {
-                address : [wallet.address],
+                address : wallet.address,
                 privateKey : wallet.privateKey,
                 publicKey : wallet.signingKey.keyPair.publicKey,
-                mnemonic : this.state.mnemonic
+                mnemonic : this.state.mnemonic,
+                uploads:'',
+                userInfo:'',
+                channelInfo:'',
             }
-            const mnemonicCipher = CryptoJS.AES.encrypt(JSON.stringify(this.state.mnemonic),this.state.npwd).toString()
-            const accountCipher = CryptoJS.AES.encrypt(JSON.stringify(account),this.state.mnemonic).toString()
-            localStorage.setItem('1', accountCipher)
-            localStorage.setItem('2', mnemonicCipher)
-            console.log(account)
+            const db = await this.props.value.orbitdb.docs(account.address,{indexBy:'address'})
+            await db.load()
+            const result = await db.get(account.address)
+            console.log(result)
+            if (result[0]){
+                console.log('found')
+                console.log(result)
+                const mnemonicCipher = CryptoJS.AES.encrypt(JSON.stringify(this.state.mnemonic),this.state.npwd).toString()
+                const accountCipher = CryptoJS.AES.encrypt(JSON.stringify(result[0]),this.state.mnemonic).toString()
+                localStorage.setItem('1', accountCipher)
+                localStorage.setItem('2', mnemonicCipher)
+                console.log(account)
+            } else {
+                console.log('nopr')
+                const mnemonicCipher = CryptoJS.AES.encrypt(JSON.stringify(this.state.mnemonic),this.state.npwd).toString()
+                const accountCipher = CryptoJS.AES.encrypt(JSON.stringify(account),this.state.mnemonic).toString()
+                localStorage.setItem('1', accountCipher)
+                localStorage.setItem('2', mnemonicCipher)
+                const orbitHash = await db.put(account)
+            }
+            // console.log(db)
             alert('Account Created')
+
         }
     }
 
@@ -130,7 +150,6 @@ export default class Import extends React.Component{
                             }} />
                         </div>
                         <button
-                            onClick={this.handleRegister}
                             disabled={!this.state.matching}
                             onClick={this.handlePress}
                         >

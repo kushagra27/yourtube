@@ -1,15 +1,17 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
 
-export default class Watch extends React.Component{
-    render(){
-        return( 
-            <div>
-                <ReactPlayer 
-                    url='https://ipfs.io/ipfs/QmPdSwMEm8f7MrH6ayfeQb2B6gJtiaR2vAXzrHwsa6tHuB' 
-                    onEnded={()=>{console.log("end")}} 
-                    on playing />
-            </div>
-        )
-    }
+export default function Watch(props){
+  return( 
+      <div>
+          <ReactPlayer 
+              url={'https://ipfs.io/ipfs/' + props.vid.hash} 
+              onEnded={()=>{console.log("end")}} 
+              width='20%'
+              height='30%'
+              controls
+              />
+          <p>{props.vid.title}</p>
+      </div>
+  )
 }

@@ -30,58 +30,53 @@ export class OrbitDBHandler extends React.Component {
       })
     
       ipfs.on('ready', async () => {
-        
-        // console.log('IPFS Online Status: ', ipfs.isOnline())
-        // ipfs.swarm.connect(ipfsPeer, (err, result) => {
-          //   console.log('connecting to peers: ', result)
-          //   ipfs.swarm.peers((err, peerCount) => {
-            //     console.log('There are this many peers: ', peerCount)
-            //   })
-            // })
-            
-            // console.log('ipfs ready' , ipfs);
-      ipfs.swarm.peers()
-      await ipfs.swarm.peers().then((peers)=>console.log(peers))
-      const options = {
-        // Give write access to everyone
-        accessController: {
-          write: ['*']
+        ipfs.swarm.peers()
+        await ipfs.swarm.peers().then((peers)=>console.log(peers))
+        const options = {
+          // Give write access to everyone
+          accessController: {
+            write: ['*']
+          }
         }
-      }
-    
-      //Create OrbitDB instance
-      const orbitdb = await OrbitDB.createInstance(ipfs , options);
-
-      console.log("orbitdb ready");
-
-      //store ipfs and orbitdb in state
-      this.setState({
-        ipfs: ipfs,
-        orbitdb: orbitdb
-      });
-      const db = await orbitdb.log('hello')
-      console.log('db :',db)
-      await db.load()
       
-      db.events.on('replicated', (address) => {
-        console.log(db.iterator({ limit: -1 }).collect())
-      })
+        //Create OrbitDB instance
+        const orbitdb = await OrbitDB.createInstance(ipfs , options);
 
-      const data = {
-        has:'confirm',
-        data: 'confirm',
-        category:['confirm','done','test']
-      }
-      // const hash = await db.add(data)
-      // console.log(hash)
+        console.log("orbitdb ready");
 
-      const result = db.iterator({ limit: -1 }).collect()
-      console.log(result)
-      console.log(result.map((element)=>{
-        return element.payload.value
-      }))
-      
-      // db.drop()
+        //store ipfs and orbitdb in state
+        this.setState({
+          ipfs: ipfs,
+          orbitdb: orbitdb
+        });
+        // const db = await this.state.orbitdb.docs('hello',{indexBy:'hash'})
+        const db = await this.state.orbitdb.docs('library',{indexBy:'hash'})
+        console.log('db :',db)
+        await db.load()
+        
+        // db.events.on('replicated', (address) => {
+        //   console.log(db.iterator({ limit: -1 }).collect())
+        // })
+
+        const data = {
+          has:'confirm',
+          data: 'confirm',
+          category:['confirm','done','test']
+        }
+        // const hash = await db.put(data)
+        // console.log(hash)
+
+        // const result = db.iterator({ limit: -1 }).collect()
+        // console.log(result)
+        // console.log(result.map((element)=>{
+        //   return element.payload.value
+        // }))
+
+        console.log(db.get(''))
+
+        // console.log(db.query((doc) => doc.category === 'fun'))
+        
+        // db.drop()
     })   
   }
 

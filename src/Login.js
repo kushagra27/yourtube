@@ -2,6 +2,8 @@ import React from 'react'
 import { Redirect , Link } from "react-router-dom"
 import CryptoJS from 'crypto-js'
 // import Background from './assets/img/login.jpg'
+import Watch from './Watch'
+const OrbitDB = require('orbit-db')
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -10,16 +12,14 @@ export default class Login extends React.Component {
         password: '',
         auth:false,
         watch:false,
-        upload:false
+        upload:false,
+        search:false,
+        query:'',
+        user:''
       };
-  
-      this.handleChange = this.handleChange.bind(this);
-      this.handleLogin = this.handleLogin.bind(this);
-      this.handleWatch = this.handleWatch.bind(this);
-      this.handleUpload = this.handleUpload.bind(this);
     }
   
-    componentDidMount(){
+    async componentDidMount(){
       const encA = localStorage.getItem('1')
       const encM = localStorage.getItem('2')
       this.setState({
@@ -28,33 +28,63 @@ export default class Login extends React.Component {
       })
     }
 
-    handleChange(event) {
-      this.setState({password: event.target.value});
+    handleChange = (event)=>{
+      const {id,value} = event.target
+      this.setState({[id]: value});
     }
   
-    handleLogin(event){
+    handleLogin = async (event)=>{
         event.preventDefault()
         try{
           const bytes  = CryptoJS.AES.decrypt(this.state.encM , this.state.password)
           const mnemonic = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
           const byt  = CryptoJS.AES.decrypt(this.state.encA, mnemonic)
-          var accounts = JSON.parse(byt.toString(CryptoJS.enc.Utf8))
-          console.log(accounts)
-          this.setState({auth:true})
+          var account = JSON.parse(byt.toString(CryptoJS.enc.Utf8))
+          console.log(account)
+          const db = await this.props.value.orbitdb.docs(account.address,{indexBy:'address'})
+          await db.load()
+          this.props.value.updateOrbit(db)
+          this.setState({
+            auth:true
+          })
+          this.props.value.updateAccount(account)
       } catch(error){
           console.log(error)
           alert('Incorrect Password')
       }
     }
 
-    handleUpload(event){
+    handleUpload = (event)=>{
       event.preventDefault()
       this.setState({upload:true})
     }
 
-    handleWatch(event){
+    handleWatch = async(event)=>{
+      console.log(this.props.value.ipfs)
+      const db = await this.props.value.orbitdb.docs('library',{indexBy:'hash'})
+      console.log('db :',db)
+      await db.load()
+      console.log('db loaded')
+      // db.events.on('replicated', (address) => {
+      //   console.log(db.iterator({ limit: -1 }).collect())
+      // })
+
+      await this.setState({db:db})
       event.preventDefault()
-      this.setState({watch:true})
+        // const result = await db.iterator({ limit: -1 }).collect()
+        const result = this.state.db.get('')
+        console.log(result)
+        
+        const videos = await result.map(vid =>{
+          console.log(vid)
+          return <Watch vid={vid} />
+        })
+        this.setState({videos:videos})
+        // this.setState({videos: result[0].hash},()=>{
+          //   console.log(this.state.videos)
+          // })
+        this.setState({watch:true})
+        
     }
 
     render() {
@@ -62,10 +92,10 @@ export default class Login extends React.Component {
         return (
           <div>
               <form>
-                  <input type="password" placeholder="Enter Password" value={this.state.password} onChange={this.handleChange} />
-                  <button onClick={this.handleLogin}>
+                <input type="password" id='password' placeholder="Enter Password" value={this.state.password} onChange={this.handleChange} />
+                <button onClick={this.handleLogin}>
                   LOG IN 
-                  </button>
+                </button>
               </form>
               <Link type="button" to='/import'>
                  IMPORT FROM SEED
@@ -78,24 +108,45 @@ export default class Login extends React.Component {
         )
       } else if(this.state.watch) {
         return(
-          <Redirect to='/watch' />
+          <div>
+            {this.state.videos}
+          </div>
         )
       } else if(this.state.upload) {
         return(
-          <Redirect to='/upload' />
+          <Redirect to={{
+            pathname:'/upload',
+            state:{account:JSON.stringify(this.state.user)}
+          }} />  
+          // <Upload />
+        )
+      } else if(this.state.search) {
+        return(
+          <Redirect to={{
+            pathname:'/search',
+            state:{account:JSON.stringify(this.state.query)}
+          }} />  
+          // <Upload />
         )
       } else {
         return(
           <div>
             <h1> Welcome </h1>
-            <button
-              onClick={this.handleWatch}
-            >
+            <form>
+                  <input type="text" id='query' placeholder="Search" value={this.state.query} onChange={this.handleChange} />
+                  <button  onSubmit={
+                    (event)=>{
+                      event.preventDefault()
+                      this.setState({search:true})
+                    }}>
+                  SEARCH
+                  </button>
+              </form>
+            <button onClick={this.handleWatch}>
               Watch
             </button>
-            <button
-              onClick={this.handleUpload}
-            >
+
+            <button onClick={this.handleUpload}>
               Upload
             </button>
           </div>
