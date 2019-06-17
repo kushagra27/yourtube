@@ -10,7 +10,6 @@ export default class Watch extends React.Component{
             title:'',
             category:'',
             description:'',
-               
           };
           this.handleChange = this.handleChange.bind(this)
     }
@@ -41,15 +40,7 @@ export default class Watch extends React.Component{
         reader.onloadend = () => this.convertToBuffer(reader)    
         console.log('ipfs',this.props.value.ipfs)
         console.log('orbitdb',this.props.value.orbitdb)
-        const db = await this.props.value.orbitdb.docs('library',{indexBy:'hash'})
-        console.log('db :',db)
-        await db.load()
-        
-        // db.events.on('replicated', (address) => {
-        //   console.log(db.iterator({ limit: -1 }).collect())
-        // })
-
-        this.setState({db:db})
+        console.log('library',this.props.value.library)
       };
 
     onSubmit = async (event) => {
@@ -63,10 +54,12 @@ export default class Watch extends React.Component{
           hash: this.state.ipfsHash,
           title:this.state.title,
           category:this.state.category,
-          description:this.state.description
+          description:this.state.description,
+          uploader:this.props.value.localAccount.channelInfo.channelName,
         }
-        const orbitHash = await this.state.db.put(data)
-        console.log('oribtHash : ',orbitHash) 
+        const orbitHash = await this.props.value.library.put(data)
+        console.log('oribtHash : ',orbitHash)
+        await this.props.value.newUpload(data.hash)
       }) 
     }
     

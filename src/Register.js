@@ -2,28 +2,20 @@ import React from 'react'
 import bip39 from 'bip39'
 import { ethers } from 'ethers'
 import CryptoJS from 'crypto-js'
-import { Redirect } from "react-router-dom";
-import ipfs from './ipfs'
-const OrbitDB = require('orbit-db')
+import { withRouter } from "react-router-dom";
 
-export default class Register extends React.Component{
+class Register extends React.Component{
     constructor(){
         super()
         this.state = {
             password:'',
             repassword:'',
             match:false,
-            mnemonic:'',
-            set:false
+            mnemonic:''
         }
     }
 
     async componentDidMount(){
-        const options = {
-            accessController: {
-              write: ['*']
-            }
-          }
         const mnem = bip39.generateMnemonic()
         this.setState({mnemonic:mnem})
     }
@@ -58,9 +50,8 @@ export default class Register extends React.Component{
             privateKey : wallet.privateKey,
             publicKey : wallet.signingKey.keyPair.publicKey,
             mnemonic : this.state.mnemonic,
-            uploads:'',
             userInfo:'',
-            channelInfo:'',
+            channelInfo:{},
         }
         let mnemonicCipher = CryptoJS.AES.encrypt(JSON.stringify(this.state.mnemonic),this.state.password).toString()
         let accountCipher = CryptoJS.AES.encrypt(JSON.stringify(account),this.state.mnemonic).toString()
@@ -75,39 +66,36 @@ export default class Register extends React.Component{
         const orbitHash = await db.put(account)
         console.log(orbitHash)
         alert("Account Created")
-        this.setState({set:true})
+        this.props.history.push('/')
     }
 
 
     render(){
-        if(!this.state.set)
-            return(
+        return(
+            <div>
+                <p>{this.state.mnemonic}</p>
                 <div>
-                    <p>{this.state.mnemonic}</p>
-                    <div>
-                        <p>Regisrer</p>
-                        <form>
-                            <div>
-                                <input type="password" id="password" placehoolder="Enter password" value={this.state.password} onChange={this.handleChange} />
-                            </div>
-                            <div>
-                                <input type="password" id="repassword" placehoolder="Re-Enter password" value={this.state.repassword} onChange={this.handleChange} />
-                            </div>
-                            <button
-                                onClick={this.handleRegister}
-                                disabled={!(this.state.match&&this.state.length)}
-                            >
-                                REGISTER
-                            </button>
-                        </form>
-                    </div>
-                    <p>{this.state.password}</p><br/>
-                    <p>{this.state.repassword}</p>
+                    <p>Regisrer</p>
+                    <form>
+                        <div>
+                            <input type="password" id="password" placehoolder="Enter password" value={this.state.password} onChange={this.handleChange} />
+                        </div>
+                        <div>
+                            <input type="password" id="repassword" placehoolder="Re-Enter password" value={this.state.repassword} onChange={this.handleChange} />
+                        </div>
+                        <button
+                            onClick={this.handleRegister}
+                            disabled={!(this.state.match&&this.state.length)}
+                        >
+                            REGISTER
+                        </button>
+                    </form>
                 </div>
-            )
-        else
-            return(
-                <Redirect to='/' />
-            )
+                <p>{this.state.password}</p><br/>
+                <p>{this.state.repassword}</p>
+            </div>
+        )
     }
 }
+
+export default withRouter(Register)

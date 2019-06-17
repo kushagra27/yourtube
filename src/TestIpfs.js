@@ -16,6 +16,11 @@ export class OrbitDBHandler extends React.Component {
     
     async componentDidMount(){
     
+      // while(1){
+      //   if(this.props.value.loading===true)
+      //     break
+      // }
+
       const ipfs = new IPFS({
         EXPERIMENTAL: {
           pubsub: true

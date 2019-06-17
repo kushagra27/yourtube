@@ -2,9 +2,9 @@ import React from 'react'
 import CryptoJS from 'crypto-js'
 import bip39 from 'bip39'
 import { ethers } from 'ethers'
+import { withRouter } from 'react-router-dom'
 
-
-export default class Import extends React.Component{
+class Import extends React.Component{
     constructor(){
         super()
         this.state = {
@@ -57,6 +57,8 @@ export default class Import extends React.Component{
             const mnemonicCipher = CryptoJS.AES.encrypt(JSON.stringify(mnemonic),this.state.npwd).toString()
             localStorage.setItem('mnemonic', mnemonicCipher)
             console.log("done")
+            alert('done')
+            this.props.history.push('/')
         } catch (err) {
             console.log(err)
             const wallet = ethers.Wallet.fromMnemonic(this.state.mnemonic)
@@ -65,9 +67,8 @@ export default class Import extends React.Component{
                 privateKey : wallet.privateKey,
                 publicKey : wallet.signingKey.keyPair.publicKey,
                 mnemonic : this.state.mnemonic,
-                uploads:'',
                 userInfo:'',
-                channelInfo:'',
+                channelInfo:{},
             }
             const db = await this.props.value.orbitdb.docs(account.address,{indexBy:'address'})
             await db.load()
@@ -91,7 +92,7 @@ export default class Import extends React.Component{
             }
             // console.log(db)
             alert('Account Created')
-
+            this.props.history.push('/')
         }
     }
 
@@ -162,3 +163,5 @@ export default class Import extends React.Component{
         }
     }
 }
+
+export default withRouter(Import)
