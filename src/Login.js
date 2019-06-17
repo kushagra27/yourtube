@@ -1,8 +1,6 @@
 import React from 'react'
 import { withRouter , Link } from "react-router-dom"
 import CryptoJS from 'crypto-js'
-// import Background from './assets/img/login.jpg'
-import Watch from './Watch'
 
 class Login extends React.Component {
     constructor(props) {
@@ -43,9 +41,7 @@ class Login extends React.Component {
           const db = await this.props.value.orbitdb.docs(account.address,{indexBy:'address'})
           await db.load()
           this.props.value.updateOrbit(db)
-          this.setState({
-            auth:true
-          })
+          this.props.value.login()
           this.props.value.updateAccount(account)
       } catch(error){
           console.log(error)
@@ -63,24 +59,11 @@ class Login extends React.Component {
 
     handleWatch = async(event)=>{
       event.preventDefault()
-      // const result = await db.iterator({ limit: -1 }).collect()
-      const result = this.props.value.library.get('')
-      console.log(result)
-      
-      const videos = await result.map(vid =>{
-        console.log(vid)
-        return <Watch vid={vid} />
-      })
-      this.setState({videos:videos})
-      // this.setState({videos: result[0].hash},()=>{
-        //   console.log(this.state.videos)
-      // })
-      this.setState({watch:true})
-      // this.props.history.push('/watch')
+      this.props.history.push('/watch')
     }
 
     render() {
-      if(!this.state.auth){
+      if(!this.props.value.auth){
         return (
           <div>
               <form>
@@ -96,12 +79,6 @@ class Login extends React.Component {
               <Link to='/register'>
                  REGISTER
               </Link>
-          </div>
-        )
-      } else if(this.state.watch) {
-        return(
-          <div>
-            {this.state.videos}
           </div>
         )
       } else {
@@ -124,6 +101,11 @@ class Login extends React.Component {
 
             <button onClick={this.handleUpload}>
               Upload
+            </button>
+            <button
+              onClick = {this.props.value.logout}
+            >
+              LOGOUT
             </button>
           </div>
         )

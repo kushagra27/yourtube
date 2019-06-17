@@ -1,0 +1,48 @@
+account = {                                                             //Schema made for every user. Stored on orbitdb docstore
+    address : wallet.address,
+    YTbalance:0,                                                        //Current balance
+    pendingBalance:0,                                                   //Money the person still has to get for past watched vids
+    privateKey : wallet.privateKey,
+    publicKey : wallet.signingKey.keyPair.publicKey,    
+    mnemonic : this.state.mnemonic,                                     //Secret phrase
+    userInfo:'',                                                        //Will store personal info of user.Will be hashed by pvt key
+    channelInfo = {
+        owner:this.props.value.localAccount.address,                    //Address of video uploader
+        alias:this.state.alias,                                         //Public display name
+        channelName:this.state.channelName,                             //Name of channel
+        email:this.state.email,
+        uploads:[],                                                     //Array of ipfs hashes
+        subscribers:'',
+    }
+}
+
+
+data = {                                                                //Schema for every video
+    hash: this.state.ipfsHash,                                          //hash of the video
+    title:this.state.title,                                             //title of video
+    category:this.state.category,                                       //category. Current search will search in category
+    description:this.state.description,                                 //description provided by uploader
+    uploader:this.props.value.localAccount.channelInfo.channelName,     //address of uploader
+    views:'',                                                           //views on vid    
+    upvotes:'',                                                         //upvotes count
+}
+
+
+channelList { key : object , index by channelName}                      //Key value pair storing channel Name and data
+
+
+
+
+
+this.state={                                                            //These are the context variables and can be accessed from anywhere  
+            name:'test',                                                //Just a test variable
+            ipfs:'',                                                    //IPFS object instance 
+            orbitdb:'',                                                 //OrbitDB object instan
+            localAccount:'',                                            //JSON object storing all the account data  
+            orbitAccount:'',                                            //OrbitDB instance for accessing the user data stored in orvi        
+            search:'',                                                  //Just a variable to pass query,  
+            library:'',                                                 //OrbitDB instance for accessing video library
+            channelList:'',                                             //OrbitDB instance for accessing channel list key value pair
+            loading:true,                                               //For making sure the components are loaded beforehand
+            auth:false,                                                 //To keep user's logged in state
+        }   

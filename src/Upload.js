@@ -56,16 +56,18 @@ export default class Watch extends React.Component{
           category:this.state.category,
           description:this.state.description,
           uploader:this.props.value.localAccount.channelInfo.channelName,
+          views:'',
+          upvotes:'',
         }
         const orbitHash = await this.props.value.library.put(data)
         console.log('oribtHash : ',orbitHash)
         await this.props.value.newUpload(data.hash)
       }) 
     }
-    
+
 
     render(){
-        return( 
+        return(
             <div>
                 <form onSubmit={this.onSubmit}>
                     <input 

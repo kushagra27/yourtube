@@ -16,8 +16,9 @@ class ProductProvider extends Component {
             search:'',
             library:'',
             channelList:'',
-            loading:true
-        }   
+            loading:true,
+            auth:false,
+        }
     }
     
     componentDidMount(){
@@ -47,12 +48,19 @@ class ProductProvider extends Component {
         })
     }
 
+    login = async() => {
+        this.setState({auth:true})
+    }
+
+    logout = async() => {
+        this.setState({auth:false})
+    }
     updateAccount = async (account)=>{
         await this.setState({localAccount:account})
         await this.state.orbitAccount.put(account)
         let accountCipher = await CryptoJS.AES.encrypt(JSON.stringify(account),this.state.localAccount.mnemonic).toString()
         await localStorage.setItem('1', accountCipher)
-        console.log('channel set')
+        console.log('account set')
     }
 
     updateOrbit = (account)=>{
@@ -95,6 +103,8 @@ class ProductProvider extends Component {
                 updateOrbit : this.updateOrbit,
                 setChannel : this.setChannel,
                 newUpload : this.newUpload,
+                login : this.login,
+                logout : this.logout,
             }}>
                 {this.props.children}
             </ProductContext.Provider>
