@@ -7,9 +7,9 @@ import Watch from './Watch'
 import Upload from './Upload'
 import OrbitDBHandler from './TestIpfs'
 import Search from './Search'
-import OrderBook from './OrderBook'
 import {ProductConsumer} from './context'
 import NewChannel from "./NewChannel";
+import Advertise from "./Advertise";
 
 
 class App extends React.Component {
@@ -29,8 +29,8 @@ class App extends React.Component {
                     <Route path="/watch" render={()=><Watch value={value}/>}></Route>
                     <Route path="/test" render={()=><OrbitDBHandler value={value}/>}></Route>
                     <Route path="/search" render={()=><Search value={value}/>}></Route>
-                    <Route path="/orderbook" render={()=><OrderBook value={value}/>}></Route>
                     <Route path="/new_channel" render={()=><NewChannel value={value}/>}></Route>
+                    <Route path="/advertise" render={()=><Advertise value={value}/>}></Route>
                   </Switch>
                 </div>
               </BrowserRouter>

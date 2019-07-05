@@ -57,11 +57,6 @@ class Login extends React.Component {
         this.props.history.push('/new_channel')
     }
 
-    handleWatch = async(event)=>{
-      event.preventDefault()
-      this.props.history.push('/watch')
-    }
-
     render() {
       if(!this.props.value.auth){
         return (
@@ -95,12 +90,15 @@ class Login extends React.Component {
                   SEARCH
                   </button>
               </form>
-            <button onClick={this.handleWatch}>
+            <button onClick={()=>this.props.history.push('watch')}>
               Watch
             </button>
 
             <button onClick={this.handleUpload}>
               Upload
+            </button>
+            <button onClick={()=>this.props.history.push('/advertise')}>
+              Advertise
             </button>
             <button
               onClick = {this.props.value.logout}

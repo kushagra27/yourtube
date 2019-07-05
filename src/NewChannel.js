@@ -30,6 +30,9 @@ class NewChannel extends React.Component{
         console.log(res)
         if(res)
             this.props.history.push('/upload')
+        else {
+            alert('Channel Name is taken. Please choose another.')
+        }
     }
 
     render(){

@@ -33,7 +33,7 @@ export class OrbitDBHandler extends React.Component {
           }
         }
       })
-    
+
       ipfs.on('ready', async () => {
         ipfs.swarm.peers()
         await ipfs.swarm.peers().then((peers)=>console.log(peers))
@@ -54,8 +54,8 @@ export class OrbitDBHandler extends React.Component {
           ipfs: ipfs,
           orbitdb: orbitdb
         });
-        // const db = await this.state.orbitdb.docs('hello',{indexBy:'hash'})
-        const db = await this.state.orbitdb.docs('library',{indexBy:'hash'})
+        // const db = await this.state.orbitdb.docs('library',{indexBy:'hash'})
+        const db = await this.state.orbitdb.open('/orbitdb/zdpuAytQMXvmgxoBSkfaQTdrcMaN8C1vDFxw27AUSR3gKt8vo/library' , {replicate:true})
         console.log('db :',db)
         await db.load()
         

@@ -21,7 +21,7 @@ class VideoComponent extends React.Component{
         return(
             <div>
                 <ReactPlayer
-                    url={'https://ipfs.io/ipfs/' + (this.state.first?this.props.ad.hash:this.props.vid.hash)}
+                    url={'https://ipfs.infura.io/ipfs/' + (this.state.first?this.props.ad.hash:this.props.vid.hash)}
                     onEnded={this.adFinish}
                     width='20%'
                     height='30%'

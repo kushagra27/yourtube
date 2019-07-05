@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ipfs from '../ipfs'
+import {ipfs,ipfs2} from '../ipfs'
 import CryptoJS from 'crypto-js'
 const OrbitDB = require('orbit-db');
 const ProductContext = React.createContext();
@@ -10,6 +10,7 @@ class ProductProvider extends Component {
         this.state={
             name:'test',
             ipfs:'',
+            ipfs2:'',
             orbitdb:'',
             localAccount:'',
             orbitAccount:'',
@@ -20,9 +21,12 @@ class ProductProvider extends Component {
             auth:false,
         }
     }
-    
-    componentDidMount(){
+
+    async componentDidMount(){
+        console.log('ipfs:',ipfs)
+        console.log('ipfs2:',ipfs2)
         this.setState({ipfs:ipfs})
+        this.setState({ipfs2:ipfs2})
         ipfs.on('ready', async () => {
             ipfs.swarm.peers()
             
@@ -36,7 +40,8 @@ class ProductProvider extends Component {
             console.log("orbitdb ready");
             await this.setState({orbitdb:orbitdb})
             console.log('orbitdb: ',orbitdb)
-            const library = await orbitdb.docs('library',{indexBy:'hash'})
+            // const library = await orbitdb.docs('library',{indexBy:'hash'})
+            const library = await orbitdb.open('/orbitdb/zdpuAytQMXvmgxoBSkfaQTdrcMaN8C1vDFxw27AUSR3gKt8vo/library',{indexBy:'hash'})
             console.log('library :',library)
             await library.load()
             console.log('library loaded')
@@ -44,6 +49,9 @@ class ProductProvider extends Component {
             const channelList = await orbitdb.docs('channels',{indexBy:'channelName'})
             await channelList.load()
             this.setState({channelList:channelList})
+            const videoList = await orbitdb.docs('videos',{indexBy:'hash'})
+            await videoList.load()
+            this.setState({videoList:videoList})
             this.setState({loading:false})
         })
     }
@@ -55,6 +63,7 @@ class ProductProvider extends Component {
     logout = async() => {
         this.setState({auth:false})
     }
+
     updateAccount = async (account)=>{
         await this.setState({localAccount:account})
         await this.state.orbitAccount.put(account)
@@ -84,7 +93,6 @@ class ProductProvider extends Component {
             await console.log(this.state.channelList.get(channelInfo.channelName))
             return true
         }
-
     }
 
     newUpload = async(hash)=>{
