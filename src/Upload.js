@@ -1,6 +1,6 @@
 import React from 'react'
-import web3 from './web3'
-import { sha256 } from 'js-sha256';
+// import web3 from './web3'
+// import { sha256 } from 'js-sha256';
 export default class Watch extends React.Component{
     constructor(){
       super()
@@ -30,15 +30,15 @@ export default class Watch extends React.Component{
         //set this buffer -using es6 syntax
           this.setState({buffer});
           console.log(buffer)
-          const hash = await sha256(JSON.stringify(this.state.buffer))
-          console.log(hash)
-          const res = await this.props.value.videoList.get(hash)
-          if(res.length === 0){
-            this.setState({vidHash:hash})
+          // const hash = await sha256(JSON.stringify(this.state.buffer))
+          // console.log(hash)
+          // const res = await this.props.value.videoList.get(hash)
+          // if(res.length === 0){
+            // this.setState({vidHash:hash})
             this.setState({verified:false})
-          } else {
-            alert('This video has already been uploaded')
-          }
+          // } else {
+            // alert('This video has already been uploaded')
+          // }
       };
 
     captureFile =async (event) => {
@@ -74,7 +74,7 @@ export default class Watch extends React.Component{
           upvotes:'',
         }
         const orbitHash = await this.props.value.library.put(data)
-        const orbitHash2 = await this.props.value.videoList.put({hash:this.state.vidHash})
+        // const orbitHash2 = await this.props.value.videoList.put({hash:this.state.vidHash})
         console.log('oribtHash : ',orbitHash)
         await this.props.value.newUpload(data.hash)
       }) 

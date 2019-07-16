@@ -45,13 +45,13 @@ class Register extends React.Component{
         console.log(wallet)
         const account = {
             address : wallet.address,
-            YTbalance:0,
-            pendingBalance:0,
+            YTbalance : 0,
+            pendingBalance : 0,
             privateKey : wallet.privateKey,
             publicKey : wallet.signingKey.keyPair.publicKey,
             mnemonic : this.state.mnemonic,
-            userInfo:'',
-            channelInfo:{},
+            userInfo : '',
+            channelInfo : {},
         }
         let mnemonicCipher = CryptoJS.AES.encrypt(JSON.stringify(this.state.mnemonic),this.state.password).toString()
         let accountCipher = CryptoJS.AES.encrypt(JSON.stringify(account),this.state.mnemonic).toString()

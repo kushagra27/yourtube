@@ -17,6 +17,7 @@ class ProductProvider extends Component {
             search:'',
             library:'',
             channelList:'',
+            videoList:'',
             loading:true,
             auth:false,
         }

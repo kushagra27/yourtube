@@ -1,6 +1,6 @@
 import React from 'react'
 import CryptoJS from 'crypto-js'
-import bip39 from 'bip39'
+// import bip39 from 'bip39'
 import { ethers } from 'ethers'
 import { withRouter } from 'react-router-dom'
 
@@ -88,7 +88,7 @@ class Import extends React.Component{
                 const accountCipher = CryptoJS.AES.encrypt(JSON.stringify(account),this.state.mnemonic).toString()
                 localStorage.setItem('1', accountCipher)
                 localStorage.setItem('2', mnemonicCipher)
-                const orbitHash = await db.put(account)
+                await db.put(account)
             }
             // console.log(db)
             alert('Account Created')
@@ -142,7 +142,7 @@ class Import extends React.Component{
                             <input className="form-control form-control-success" type="password" id="repassword" placehoolder="Re-Enter password" value={this.state.cpwd} 
                             onChange={(event)=>{
                                 this.setState({cpwd:event.target.value},()=>{
-                                    if (this.state.cpwd != this.state.npwd){
+                                    if (this.state.cpwd !== this.state.npwd){
                                         this.setState({matching:false})
                                     } else {
                                         this.setState({matching:true})
