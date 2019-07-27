@@ -8,9 +8,10 @@ class NewChannel extends React.Component{
             alias:'',
             channelName:'',
             email:'',
+            channelList:'',
         }
     }
-    
+
     handleChange = (event) => {
         const {id,value} = event.target
         this.setState({[id]: value})
@@ -23,15 +24,21 @@ class NewChannel extends React.Component{
             alias:this.state.alias,
             channelName:this.state.channelName,
             email:this.state.email,
+            bookings:[],
             uploads:[],
             subscribers:'',
         }
         const res = await this.props.value.setChannel(channelInfo)
         console.log(res)
-        if(res)
+        if(res){
             this.props.history.push('/upload')
+            const check = await this.props.value.channelList.get('')
+            console.log(check)
+        }
         else {
             alert('Channel Name is taken. Please choose another.')
+            const check = await this.props.value.channelList.get('')
+            console.log(check)
         }
     }
 

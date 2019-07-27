@@ -18,6 +18,7 @@ class ProductProvider extends Component {
             library:'',
             channelList:'',
             videoList:'',
+            adSlots:'',
             loading:true,
             auth:false,
         }
@@ -47,9 +48,12 @@ class ProductProvider extends Component {
             await library.load()
             console.log('library loaded')
             this.setState({library:library})
-            const channelList = await orbitdb.docs('channels',{indexBy:'channelName'})
+            const channelList = await orbitdb.docs('channelLists',{indexBy:'channelName'})
             await channelList.load()
             this.setState({channelList:channelList})
+            // const adSlots = await orbitdb.docs('Ads',{indexBy:'date'})
+            // await adSlots.load()
+            // this.setState({adSlots:adSlots})
             const videoList = await orbitdb.docs('videos',{indexBy:'hash'})
             await videoList.load()
             this.setState({videoList:videoList})
@@ -84,6 +88,7 @@ class ProductProvider extends Component {
             return false
         } else {
             console.log('name:' , channelInfo.channelName)
+            
             const hash = await this.state.channelList.put(channelInfo)
             console.log(hash)
             let account = this.state.localAccount
@@ -94,6 +99,10 @@ class ProductProvider extends Component {
             await console.log(this.state.channelList.get(channelInfo.channelName))
             return true
         }
+    }
+
+    updateSlots = async (bookInfo)=>{
+        
     }
 
     newUpload = async(hash)=>{

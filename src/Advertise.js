@@ -1,7 +1,7 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
-import axios from 'axios'
 import MovieSearchBox from './MovieSearchBox'
+import BookSlot from './BookSlot'
 
 class Advertise extends React.Component{
 
@@ -11,7 +11,8 @@ class Advertise extends React.Component{
                 <p>
                     Advertiser
                 </p>
-            <MovieSearchBox />
+            {/* <MovieSearchBox /> */}
+            <BookSlot value={this.props.value}/>
             </div>
         )
     }

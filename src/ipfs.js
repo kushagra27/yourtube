@@ -22,6 +22,6 @@ const ipfs = new IPFS2({
 
 //run with local daemon
 // const ipfsApi = require('ipfs-api');
-// const ipfs = new ipfsApi('localhost', '5001', {protocol:'http'});
+// const ipfs2 = new ipfsApi('localhost', '5001', {protocol:'http'});
 
 export {ipfs,ipfs2};
