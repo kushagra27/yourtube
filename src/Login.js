@@ -49,14 +49,6 @@ class Login extends React.Component {
       }
     }
 
-    handleUpload = (event)=>{
-      event.preventDefault()
-      if(this.props.value.localAccount.channelInfo.channelName)
-        this.props.history.push('/upload')
-      else 
-        this.props.history.push('/new_channel')
-    }
-
     render() {
       if(!this.props.value.auth){
         return (
@@ -94,8 +86,8 @@ class Login extends React.Component {
               Watch
             </button>
 
-            <button onClick={this.handleUpload}>
-              Upload
+            <button onClick={()=>this.props.history.push('dashboard')}>
+              Dashboard
             </button>
             <button onClick={()=>this.props.history.push('/advertise')}>
               Advertise

@@ -10,6 +10,7 @@ import Search from './Search'
 import {ProductConsumer} from './context'
 import NewChannel from "./NewChannel";
 import Advertise from "./Advertise";
+import Dashboard from "./Dashboard";
 
 
 class App extends React.Component {
@@ -31,6 +32,7 @@ class App extends React.Component {
                     <Route path="/search" render={()=><Search value={value}/>}></Route>
                     <Route path="/new_channel" render={()=><NewChannel value={value}/>}></Route>
                     <Route path="/advertise" render={()=><Advertise value={value}/>}></Route>
+                    <Route path="/dashboard" render={()=><Dashboard value={value}/>}></Route>
                   </Switch>
                 </div>
               </BrowserRouter>
