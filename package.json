@@ -5,7 +5,10 @@
   "dependencies": {
     "axios": "^0.19.0",
     "bip39": "^2.0.2",
+    "bittorrent-protocol": "^3.1.1",
     "crypto-js": "^3.1.9-1",
+    "dat": "^13.13.1",
+    "dat-js": "^8.0.2",
     "ethers": "^4.0.28",
     "ipfs": "^0.34.4",
     "ipfs-api": "^26.1.2",

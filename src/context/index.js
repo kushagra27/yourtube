@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import {ipfs,ipfs2} from '../ipfs'
 import CryptoJS from 'crypto-js'
+import Web3 from 'web3'
 const OrbitDB = require('orbit-db');
 const ProductContext = React.createContext();
-
 class ProductProvider extends Component {
     constructor(){
         super()
@@ -21,10 +21,36 @@ class ProductProvider extends Component {
             adSlots:'',
             loading:true,
             auth:false,
+            web3:'',
         }
     }
 
+    
+    isInstalled = ()=>{
+        if (typeof this.state.web3 !== 'undefined'){
+            console.log('MetaMask is installed')
+        } 
+        else{
+            console.log('MetaMask is not installed')
+        }
+    }
+    isLocked = async ()=>{
+        const data = await this.state.web3.eth.getAccounts()
+        if (data.length === 0) {
+            console.log('MetaMask is locked',data)
+        }
+        else {
+            console.log('MetaMask is unlocked',data)
+        }
+    }
+    
     async componentDidMount(){
+        let web3
+        web3 = await new Web3(window.ethereum);
+        this.setState({web3},async ()=>{
+            await this.isInstalled()
+            await this.isLocked()
+        })
         console.log('ipfs:',ipfs)
         console.log('ipfs2:',ipfs2)
         this.setState({ipfs:ipfs})
@@ -42,8 +68,8 @@ class ProductProvider extends Component {
             console.log("orbitdb ready");
             await this.setState({orbitdb:orbitdb})
             console.log('orbitdb: ',orbitdb)
-            // const library = await orbitdb.docs('library',{indexBy:'hash'})
-            const library = await orbitdb.open('/orbitdb/zdpuAytQMXvmgxoBSkfaQTdrcMaN8C1vDFxw27AUSR3gKt8vo/library',{indexBy:'hash'})
+            const library = await orbitdb.docs('library',{indexBy:'hash'})
+            // const library = await orbitdb.open('/orbitdb/zdpuAytQMXvmgxoBSkfaQTdrcMaN8C1vDFxw27AUSR3gKt8vo/library',{indexBy:'hash'})
             console.log('library :',library)
             await library.load()
             console.log('library loaded')
@@ -59,6 +85,8 @@ class ProductProvider extends Component {
             this.setState({videoList:videoList})
             this.setState({loading:false})
         })
+
+        
     }
 
     login = async() => {
